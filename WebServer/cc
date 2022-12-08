@@ -1,1 +1,6 @@
 java serverWeb.java
+
+  data.close();
+            out.close();
+            in.close();
+            clientSocket.close();

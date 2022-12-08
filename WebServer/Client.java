@@ -30,5 +30,6 @@ public class Client {
             retour = retour + object;
         }
         clientSocket.close();
+        return retour;
     }
 }

@@ -57,8 +57,13 @@ public class ServerWeb {
 
                 if (f.getUrlClient(list, f1) != null) {
                     if (f.getUrlClient(list, f1).equals("/") == false) {
-                        File myFile = new File(f.getUrlClient(list, f1));
-                        line = f.getHtmlText(myFile);
+                        if (f.getExtension(f.getUrlClient(list, f1)) == true) {// raha php
+                            line = f.getHtmlTOPhp(f.getUrlClient(list, f1));
+                        } else { // raja html
+                            File myFile = new File(f.getUrlClient(list, f1));
+                            line = f.getHtmlText(myFile);
+                        }
+
                     } else {
                         line = "oko";
                     }

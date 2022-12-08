@@ -1,6 +1,9 @@
 package need;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -86,4 +89,29 @@ public class Function {
         return false;
     }
 
+    public String getHtmlTOPhp(String path) throws Exception {
+        Runtime run = Runtime.getRuntime();
+        // run.exec("cd php-5.3.25");
+        Process process = run.exec("php " + path);
+
+        InputStream stream = process.getInputStream();
+        InputStreamReader in = new InputStreamReader(stream);
+        BufferedReader buffered = new BufferedReader(in);
+        String answer = "";
+        String myread = "";
+        while ((myread = buffered.readLine()) != null) {
+            answer = answer + myread + "\n";
+        }
+        stream.close();
+        in.close();
+        buffered.close();
+        return answer;
+    }
+
+    public boolean getExtension(String url) {
+        if (url.contains("php")) {
+            return true;
+        }
+        return false;
+    }
 }

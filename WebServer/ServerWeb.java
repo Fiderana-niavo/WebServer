@@ -14,7 +14,18 @@ public class ServerWeb {
         ServerSocket serverSocket = new ServerSocket(port);
         System.err.println("Serveur lancé sur le port : " + port);
         Socket clientSocket = new Socket();
+        String s = "";
+        String a = "";
+        String ok = "";
+
+        Function f = new Function();
+
+        BufferedReader in = null;
+
+        PrintWriter out = null;
+
         try {
+
             // repeatedly wait for connections, and proces
             while (true) {
 
@@ -22,36 +33,40 @@ public class ServerWeb {
                 clientSocket = serverSocket.accept();
                 System.err.println("Nouveau client connecté");
 
-                // on ouvre un flux de converation
-
-                BufferedReader in = new BufferedReader(
+                in = new BufferedReader(
                         new InputStreamReader(clientSocket.getInputStream()));
 
-                PrintWriter out = new PrintWriter(
+                out = new PrintWriter(
                         new BufferedWriter(
                                 new OutputStreamWriter(clientSocket.getOutputStream())));
 
-                String s = "";
-                String a = "";
-                String ok = "";
-                Function f = new Function();
+                // on ouvre un flux de converation
+
                 ArrayList list = new ArrayList<>();
                 while ((s = in.readLine()) != null) {
+                    System.out.println(s);
                     list.add(s);
                     if (s.equalsIgnoreCase("")) {
                         break;
                     }
                 }
                 File f1 = new File("www");
+                String c = f.getAllFile(f1);
                 String line = new String();
                 System.out.println(f.getUrlClient(list, f1) + "urlato");
-                File myFile = new File("www", f.getUrlClient(list, f1));
-                if (f.getUrlClient(list, myFile) == null) {
-                    line = "Fichier ou dossier introuvable";
+
+                if (f.getUrlClient(list, f1) != null) {
+                    if (f.getUrlClient(list, f1).equals("/") == false) {
+                        File myFile = new File("www", f.getUrlClient(list, f1));
+                        line = f.getHtmlText(myFile);
+                    } else {
+                        line = c;
+                    }
                 } else {
-                    line = f.getHtmlText(myFile);
+                    line = "Fichier ou dossier introuvable";
                 }
 
+                clientSocket.shutdownInput();
                 out.write("HTTP/1.0 200 OK\r\n");
                 out.write("Date: Fri, 31 Dec 1999 23:59:59 GMT\r\n");
                 out.write("Server: Apache/0.8.4\r\n");
@@ -62,12 +77,16 @@ public class ServerWeb {
                 out.write("\r\n");
                 out.write(line);
                 out.flush();
+                clientSocket.shutdownOutput();
+
             }
-            // clientSocket.shutdownOutput();
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         } finally {
+            out.close();
+            in.close();
             clientSocket.close();
         }
 

@@ -19,7 +19,7 @@ public class Function {
         return null;
     }
 
-    public boolean verifyFicher(File f, String fichier) {
+    public boolean verifyFichier(File f, String fichier) {
         String[] files = new String[f.list().length];
         for (int i = 0; i < f.list().length; i++) {
             String file = "/" + f.list()[i];
@@ -37,12 +37,17 @@ public class Function {
             value = (String) array.get(i);
             if (value.contains("GET /") && value.contains("favicon.ico") == false) {
                 myval = value.split(" ")[1];
-                System.out.println(verifyFicher(file, myval.strip()) + "url");
-                if (verifyFicher(file, myval.strip()) == true) {
+                System.out.println(verifyFichier(file, myval) + "url");
+                if (verifyFichier(file, myval.strip()) == true) {
 
                     return myval;
                 }
+                if (myval.equalsIgnoreCase("/")) {
+                    System.out.println("okay eh");
+                    return "/";
+                }
             }
+
         }
         return null;
     }
@@ -54,5 +59,14 @@ public class Function {
             line = line + lire.nextLine() + "\n";
         }
         return line;
+    }
+
+    public String getAllFile(File file) {
+        String valiny = "<table><tr><td>Voici Tous les fichiers/Dossiers</td><tr> \n";
+        for (int i = 0; i < file.list().length; i++) {
+            valiny = valiny + "<tr><td><a href='www/MyExemple.html'>" + file.list()[i] + "</a></td><tr> \n";
+        }
+        valiny = valiny + "</table>";
+        return valiny;
     }
 }

@@ -40,7 +40,7 @@ public class Function {
                 System.out.println(verifyFichier(file, myval) + "url");
                 if (verifyFichier(file, myval.strip()) == true) {
 
-                    return myval;
+                    return "www" + myval;
                 }
                 if (myval.equalsIgnoreCase("/")) {
                     System.out.println("okay eh");

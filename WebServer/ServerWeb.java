@@ -57,10 +57,10 @@ public class ServerWeb {
 
                 if (f.getUrlClient(list, f1) != null) {
                     if (f.getUrlClient(list, f1).equals("/") == false) {
-                        File myFile = new File("www", f.getUrlClient(list, f1));
+                        File myFile = new File(f.getUrlClient(list, f1));
                         line = f.getHtmlText(myFile);
                     } else {
-                        line = c;
+                        line = "oko";
                     }
                 } else {
                     line = "Fichier ou dossier introuvable";

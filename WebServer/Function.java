@@ -64,9 +64,26 @@ public class Function {
     public String getAllFile(File file) {
         String valiny = "<table><tr><td>Voici Tous les fichiers/Dossiers</td><tr> \n";
         for (int i = 0; i < file.list().length; i++) {
-            valiny = valiny + "<tr><td><a href='www/MyExemple.html'>" + file.list()[i] + "</a></td><tr> \n";
+            valiny = valiny + "<tr><td><a href=www" + file.list()[i] + ">" + file.list()[i] + "</a></td><tr> \n";
         }
         valiny = valiny + "</table>";
         return valiny;
     }
+
+    public boolean getIfFolder(String directorie) {
+        File file = new File("www" + directorie);
+        if (file.isDirectory() == true) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean getIfFichier(String directorie) {
+        File file = new File("www" + directorie);
+        if (file.isDirectory() == true) {
+            return true;
+        }
+        return false;
+    }
+
 }

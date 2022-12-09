@@ -10,3 +10,7 @@ Le project ne marche que dans mozilla firefox
 ->Si le  fichier est de type html le serveur lit dans le ficier demander et retourne la version  String du fichier lu plar l'intermediaire de la fonction "getHtmlText"
  
 --On a la fonction getExtension pour savoir si la ressource demande est de type php, sinon il sera de type html
+--On peut envoyer une valeur d'une page a une autre par formulaire
+
+Si la methode est de type get on prend la valeur de la variable envoye par formulaire grace a la fonction  "getVariable"
+Si elle est de type post on prend la valeur en cherchant dans le header du client la valeur envoye par get

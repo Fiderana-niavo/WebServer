@@ -82,21 +82,6 @@ public class Function {
         }
     }
 
-    /*
-     * public String getVariable(ArrayList array, BufferedReader in) throws
-     * Exception {
-     * String url = this.getUrlClient(array);
-     * System.out.println(url + "ito koa eh ");
-     * String answer = "";
-     * if (url.equals("") == false) {
-     * String urlClient = "www" + url.split(" ")[1];
-     * if (urlClient.contains("?")) {
-     * answer = urlClient.split("\\?")[1];
-     * }
-     * }
-     * return answer;
-     * }
-     */
     public String getVariable(String url, BufferedReader in) throws Exception {
         System.out.println(url + "ito koa eh ");
         String answer = "";

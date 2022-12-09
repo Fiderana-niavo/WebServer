@@ -7,7 +7,7 @@
     <title>My first</title>
 </head>
 <body>
-    <form method="get" action="MyTest.php">
+    <form method="post" action="MyTest.php">
         <input type="text" name="anarana" value="okok">
         <input type ="submit">
     </form>

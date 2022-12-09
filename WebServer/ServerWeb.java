@@ -43,27 +43,58 @@ public class ServerWeb {
                 // on ouvre un flux de converation
 
                 ArrayList list = new ArrayList<>();
+                String varPost = "";
+                int length = 0;
+                System.out.println(s);
+
                 while ((s = in.readLine()) != null) {
-                    System.out.println(s);
                     list.add(s);
-                    if (s.equalsIgnoreCase("")) {
+                    if (s.contains("Content-Length")) {
+                        length = Integer.valueOf(s.split(":")[1].trim());
+                    }
+                    if (s.isEmpty()) {
                         break;
                     }
                 }
+                if (length > 0) {
+                    char[] myValue = new char[length];
+                    in.read(myValue, 0, length);
+                    varPost = new String(myValue);
+                }
+
+                String path = f.getUrlClient(list);
+                String variable = "";
+                String line = new String();
+                String url = "";
+                if (path.equals("") == false) {
+                    if (path.contains("POST")) {
+                        System.out.println("oui");
+                        if (varPost.equals("") == false) {
+                            url = f.getUrlEnd(list) + "?" + varPost;
+                            System.out.println(url + "okok");
+                        }
+                    }
+                    if (path.contains("GET")) {
+                        url = f.getUrlEnd(list);
+                    }
+                }
+                variable = f.getVariable(path, in);
+                System.out.println(url + "iii");
+                System.out.println(variable + "vari1");
                 File f1 = new File("www");
                 String c = f.getAllFile(f1);
-                String line = new String();
-                // System.out.println(f.getUrlEnd(list) + "urlato");
-                String variable = f.getVariableByGet(list);
-                System.out.println(variable + "varia");
-                if (f.getUrlEnd(list) != null) {
-                    if (f.getUrlEnd(list).equals("/") == false) {
-                        if (f.getExtension(f.getUrlEnd(list)) == true) {// raha php
-                            line = f.getHtmlTOPhp(f.getUrlEnd(list), variable);
-                        } else { // raja html
-                            File myFile = new File(f.getUrlEnd(list));
-                            line = f.getHtmlText(myFile);
-                        }
+                // System.out.println(url + "urlato");
+                if (url.equals("") == false) {
+                    if (url.equals("/") == false) {
+                        if (f.getExtension(url) == true) {// raha php
+                            System.out.println(variable + "oko");
+                            line = f.getHtmlTOPhp(url.split("\\?")[0], variable);
+                        } /*
+                           * else { // raja html
+                           * File myFile = new File(url);
+                           * line = f.getHtmlText(myFile);
+                           * }
+                           */
 
                     } else {
                         line = "oko";
@@ -87,7 +118,9 @@ public class ServerWeb {
 
             }
 
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         } finally {

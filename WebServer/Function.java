@@ -22,44 +22,58 @@ public class Function {
         return null;
     }
 
-    /*
-     * public boolean verifyFichier(File f, String fichier) {
-     * String[] files = new String[f.list().length];
-     * for (int i = 0; i < f.list().length; i++) {
-     * String file = "/" + f.list()[i];
-     * if (file.equalsIgnoreCase(fichier) == true) {
-     * return true;
-     * }
-     * }
-     * return false;
-     * }
-     */
+    public boolean verifyFichier(File f, String fichier) {
+        String[] files = new String[f.list().length];
+        for (int i = 0; i < f.list().length; i++) {
+            String file = "/" + f.list()[i];
+            if (file.equalsIgnoreCase(fichier) == true) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public String getUrlClient(ArrayList lists) {
         String url = "";
         for (int i = 0; i < lists.size(); i++) {
             String valuable = (String) lists.get(i);
-            if (valuable.contains("GET /") && valuable.contains("favicon.ico") == false) {
-                System.out.println(valuable + "valuable");
-                url = valuable;
-                return url.split(" ")[1];
-            }
-            if (valuable.contains("POST /") && valuable.contains("favicon.ico") == false) {
-                System.out.println(valuable + "valuablr");
-                url = valuable;
-                return url.split(" ")[1];
+            if (valuable.contains("favicon.ico") == false) {
+                if (valuable.contains("GET") || valuable.contains("POST"))
+                    url = valuable;
+                return url;
             }
         }
         return null;
     }
 
+    public String getvaleurPost(BufferedReader in) throws Exception {
+        String str = "";
+        String answer = "";
+        int length = 0;
+        while ((str = in.readLine()) != null) {
+            if (str.contains("Content-Length")) {
+                length = Integer.valueOf(str.split(":")[1].trim());
+            }
+            if (str.isEmpty()) {
+                break;
+            }
+        }
+        if (length > 0) {
+            char[] myValue = new char[length];
+            in.read(myValue, 0, length);
+            answer = new String(myValue);
+        }
+        return answer;
+    }
+
     public String getUrlEnd(ArrayList array) {
-        String urlClient = this.getUrlClient(array);
-        if (urlClient != null) {
-            System.out.println(urlClient + "myUrl itoooo");
+        String url = this.getUrlClient(array);
+        if (url.equals("") == false) {
+            String urlClient = "www" + url.split(" ")[1];
             if (urlClient.contains("?")) {
                 System.out.println(urlClient.split("\\?")[0] + "url get");
                 return urlClient.split("\\?")[0];
+
             } else {
                 return urlClient;
             }
@@ -68,14 +82,31 @@ public class Function {
         }
     }
 
-    public String getVariableByGet(ArrayList array) {
-        String urlClient = this.getUrlClient(array);
-        if (urlClient != null && urlClient.contains("?")) {
-            System.out.println();
-            return urlClient.split("\\?")[1];
-        } else {
-            return "";
+    /*
+     * public String getVariable(ArrayList array, BufferedReader in) throws
+     * Exception {
+     * String url = this.getUrlClient(array);
+     * System.out.println(url + "ito koa eh ");
+     * String answer = "";
+     * if (url.equals("") == false) {
+     * String urlClient = "www" + url.split(" ")[1];
+     * if (urlClient.contains("?")) {
+     * answer = urlClient.split("\\?")[1];
+     * }
+     * }
+     * return answer;
+     * }
+     */
+    public String getVariable(String url, BufferedReader in) throws Exception {
+        System.out.println(url + "ito koa eh ");
+        String answer = "";
+        if (url.equals("") == false) {
+            String urlClient = "www" + url.split(" ")[1];
+            if (urlClient.contains("?")) {
+                answer = urlClient.split("\\?")[1];
+            }
         }
+        return answer;
     }
 
     public String getHtmlText(File myFile) throws Exception {
@@ -113,6 +144,7 @@ public class Function {
     }
 
     public String getHtmlTOPhp(String path, String variable) throws Exception {
+        System.out.println(variable + "variabvlr");
         Runtime run = Runtime.getRuntime();
         // run.exec("cd php-5.3.25");
         Process process = run.exec("php-cgi " + path + " " + variable);
@@ -137,4 +169,5 @@ public class Function {
         }
         return false;
     }
+
 }

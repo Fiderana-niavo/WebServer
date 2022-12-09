@@ -1,5 +1,5 @@
 <?php 
-    $nom= $_GET['anarana'];
+    $nom= $_POST['anarana'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

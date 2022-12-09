@@ -1,3 +1,6 @@
+<?php 
+    $nom= $_GET['anarana'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +10,9 @@
     <title>hello</title>
 </head>
 <body>
-        <p>My exemple</p>
+        <?php
+            echo $nom;
+            echo "hello";
+        ?>
 </body>
 </html>

@@ -22,37 +22,60 @@ public class Function {
         return null;
     }
 
-    public boolean verifyFichier(File f, String fichier) {
-        String[] files = new String[f.list().length];
-        for (int i = 0; i < f.list().length; i++) {
-            String file = "/" + f.list()[i];
-            if (file.equalsIgnoreCase(fichier) == true) {
-                return true;
+    /*
+     * public boolean verifyFichier(File f, String fichier) {
+     * String[] files = new String[f.list().length];
+     * for (int i = 0; i < f.list().length; i++) {
+     * String file = "/" + f.list()[i];
+     * if (file.equalsIgnoreCase(fichier) == true) {
+     * return true;
+     * }
+     * }
+     * return false;
+     * }
+     */
+
+    public String getUrlClient(ArrayList lists) {
+        String url = "";
+        for (int i = 0; i < lists.size(); i++) {
+            String valuable = (String) lists.get(i);
+            if (valuable.contains("GET /") && valuable.contains("favicon.ico") == false) {
+                System.out.println(valuable + "valuable");
+                url = valuable;
+                return url.split(" ")[1];
             }
-        }
-        return false;
-    }
-
-    public String getUrlClient(ArrayList array, File file) {
-        String value = "";
-        String myval = "";
-        for (int i = 0; i < array.size(); i++) {
-            value = (String) array.get(i);
-            if (value.contains("GET /") && value.contains("favicon.ico") == false) {
-                myval = value.split(" ")[1];
-                System.out.println(verifyFichier(file, myval) + "url");
-                if (verifyFichier(file, myval.strip()) == true) {
-
-                    return "www" + myval;
-                }
-                if (myval.equalsIgnoreCase("/")) {
-                    System.out.println("okay eh");
-                    return "/";
-                }
+            if (valuable.contains("POST /") && valuable.contains("favicon.ico") == false) {
+                System.out.println(valuable + "valuablr");
+                url = valuable;
+                return url.split(" ")[1];
             }
-
         }
         return null;
+    }
+
+    public String getUrlEnd(ArrayList array) {
+        String urlClient = this.getUrlClient(array);
+        if (urlClient != null) {
+            System.out.println(urlClient + "myUrl itoooo");
+            if (urlClient.contains("?")) {
+                System.out.println(urlClient.split("\\?")[0] + "url get");
+                return urlClient.split("\\?")[0];
+            } else {
+                return urlClient;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public String getVariableByGet(ArrayList array) {
+        String urlClient = this.getUrlClient(array);
+        if (urlClient != null && urlClient.contains("?")) {
+            System.out.println();
+            return urlClient.split("\\?")[1];
+        } else {
+            return "";
+        }
     }
 
     public String getHtmlText(File myFile) throws Exception {
@@ -89,10 +112,10 @@ public class Function {
         return false;
     }
 
-    public String getHtmlTOPhp(String path) throws Exception {
+    public String getHtmlTOPhp(String path, String variable) throws Exception {
         Runtime run = Runtime.getRuntime();
         // run.exec("cd php-5.3.25");
-        Process process = run.exec("php " + path);
+        Process process = run.exec("php-cgi " + path + " " + variable);
 
         InputStream stream = process.getInputStream();
         InputStreamReader in = new InputStreamReader(stream);

@@ -53,14 +53,15 @@ public class ServerWeb {
                 File f1 = new File("www");
                 String c = f.getAllFile(f1);
                 String line = new String();
-                System.out.println(f.getUrlClient(list, f1) + "urlato");
-
-                if (f.getUrlClient(list, f1) != null) {
-                    if (f.getUrlClient(list, f1).equals("/") == false) {
-                        if (f.getExtension(f.getUrlClient(list, f1)) == true) {// raha php
-                            line = f.getHtmlTOPhp(f.getUrlClient(list, f1));
+                // System.out.println(f.getUrlEnd(list) + "urlato");
+                String variable = f.getVariableByGet(list);
+                System.out.println(variable + "varia");
+                if (f.getUrlEnd(list) != null) {
+                    if (f.getUrlEnd(list).equals("/") == false) {
+                        if (f.getExtension(f.getUrlEnd(list)) == true) {// raha php
+                            line = f.getHtmlTOPhp(f.getUrlEnd(list), variable);
                         } else { // raja html
-                            File myFile = new File(f.getUrlClient(list, f1));
+                            File myFile = new File(f.getUrlEnd(list));
                             line = f.getHtmlText(myFile);
                         }
 

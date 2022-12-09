@@ -1,4 +1,4 @@
-Le project ne marche que dans mozilla firefox 
+Le project ne marche que dans mozilla firefox, Il y a un bug en edge ou en chrome
 
 ->Le client tape l'url en tapant uniquement le nom du fichier. 
 ->Grace a la fonction "getUrlClient" je prends l'url contenant "GET" ou "POST" mais qui est different de "favicon.ico", dans un but d'obtenir la ressource demande par le client.
@@ -13,4 +13,5 @@ Le project ne marche que dans mozilla firefox
 --On peut envoyer une valeur d'une page a une autre par formulaire
 
 Si la methode est de type get on prend la valeur de la variable envoye par formulaire grace a la fonction  "getVariable"
-Si elle est de type post on prend la valeur en cherchant dans le header du client la valeur envoye par get
+Si elle est de type post on prend la valeur en cherchant dans le header du client la valeur envoye par post puis on concat l'url de post qui ne contient pas de "?" par "?+la variable de post obtenu"
+:a variable de get sera obtenu par la recherche de "Content length" qui sera de la taille de la variable envoye, puis on prend la char[] de meme longueur que le length obtenu apres "Content length",La variable sera lu de 0 jusqu'a la fin de la len 

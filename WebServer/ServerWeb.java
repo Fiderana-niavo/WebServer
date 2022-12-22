@@ -1,6 +1,8 @@
 package webserver;
 
 import java.net.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.lang.*;
 import java.io.*;
 import java.util.*;
@@ -10,9 +12,7 @@ public class ServerWeb {
     public static void main(String[] args) throws Exception {
 
         // création de la socket
-        int port = 1989;
-        ServerSocket serverSocket = new ServerSocket(port);
-        System.err.println("Serveur lancé sur le port : " + port);
+        // System.err.println("Serveur lancé sur le port : " + port);
         Socket clientSocket = new Socket();
         String s = "";
         String a = "";
@@ -25,7 +25,9 @@ public class ServerWeb {
         PrintWriter out = null;
 
         try {
-
+            int port = Integer.valueOf(f.getPort());
+            ServerSocket serverSocket = new ServerSocket(port);
+            System.err.println("Serveur lancé sur le port : " + port);
             // repeatedly wait for connections, and proces
             while (true) {
 
@@ -47,8 +49,8 @@ public class ServerWeb {
                 int length = 0;
                 System.out.println(s);
 
-                while ((s = in.readLine()) != null) {
-                    list.add(s);
+                while ((s = in.readLine()) != null) { // maka ny requete avy any am client
+                    list.add(s); // requete ampisirina ao anaty arrayList
                     if (s.contains("Content-Length")) {
                         length = Integer.valueOf(s.split(":")[1].trim());
                     }
@@ -57,60 +59,84 @@ public class ServerWeb {
                     }
                 }
                 if (length > 0) {
-                    char[] myValue = new char[length];
+                    char[] myValue = new char[length]; // maka ilay variable
                     in.read(myValue, 0, length);
                     varPost = new String(myValue);
                 }
 
+                String status = "HTTP/1.0 200 OK\r\n";
+                String date = "Date: " + String.valueOf(LocalDateTime.now())
+                        + "\r\n";
+                String line = new String();
+                String contentLength = "";
+                String contentType = "";
+                String lastModified = "Last-modified:";
+
                 String path = f.getUrlClient(list);
                 String variable = "";
-                String line = new String();
                 String url = "";
+
                 if (path.equals("") == false) {
                     if (path.contains("POST")) {
                         System.out.println("oui");
                         if (varPost.equals("") == false) {
-                            url = f.getUrlEnd(list) + "?" + varPost;
-                            System.out.println(url + "okok");
+                            url = f.getUrlEnd(list);
+                            path = path + "?" + varPost + " HTTP/1.1";
+                            System.out.println(path + "okok");
                         }
                     }
                     if (path.contains("GET")) {
                         url = f.getUrlEnd(list);
                     }
                 }
+
                 variable = f.getVariable(path, in);
-                System.out.println(url + "iii");
-                System.out.println(variable + "vari1");
                 File f1 = new File("www");
                 String c = f.getAllFile(f1);
-                // System.out.println(url + "urlato");
-                if (url.equals("") == false) {
-                    if (url.equals("/") == false) {
-                        if (f.getExtension(url) == true) {// raha php
-                            System.out.println(variable + "oko");
-                            line = f.getHtmlTOPhp(url.split("\\?")[0], variable);
-                        } /*
-                           * else { // raja html
-                           * File myFile = new File(url);
-                           * line = f.getHtmlText(myFile);
-                           * }
-                           */
+                System.out.println(url + "url");
 
+                if (url.contains("favicon.ico") == false) {
+                    if (url.equals("www/") == false) {
+                        if (f.verifyFichier(f1, url.split("/")[1]) == true) {
+                            File fileConcerned = new File("www/" + url.split("/")[1]);
+                            lastModified = lastModified + String.valueOf(fileConcerned.lastModified()) + "\r\n";
+                            System.out.println("www/" + url.split("/")[1] + "last");
+                            if (f.getExtensionPhp(url) == true) {// raha php
+                                line = f.getHtmlTOPhp(url.split("\\?")[0], variable);
+                                contentLength = "Content-Length:" + String.valueOf(line.length()) + "\r\n";
+                                contentType = "Content-Type:text/html\r\n";
+                            } else { // raja html
+                                File myFile = new File(url);
+                                line = f.getHtmlText(myFile);
+                                contentLength = "Content-Length:" + String.valueOf(line.length()) + "\r\n";
+                                contentType = "Content-Type:text/html\r\n";
+                            }
+
+                        } else {
+                            line = "Fichier ou dossier introuvable \n";
+                            line = line + "Error 401";
+                            status = "HTTP/1.0 401 Error\r\n";
+                            contentLength = "Content-Length" + String.valueOf(0);
+                            contentType = "Content-Type:None\r\n";
+                            lastModified = lastModified + "None\r\n";
+                        }
                     } else {
-                        line = "oko";
+                        line = f.getAllFile(f1);
+                        contentLength = "Content-Length:" + String.valueOf(line.length()) + "\r\n";
+                        contentType = "Content-Type:None\r\n";
+                        File fileConcerned = new File("www");
+                        lastModified = lastModified + String.valueOf(fileConcerned.lastModified()) + "\r\n";
                     }
-                } else {
-                    line = "Fichier ou dossier introuvable";
                 }
 
                 clientSocket.shutdownInput();
-                out.write("HTTP/1.0 200 OK\r\n");
-                out.write("Date: Fri, 31 Dec 1999 23:59:59 GMT\r\n");
+                out.write(status);
+                out.write(date);
                 out.write("Server: Apache/0.8.4\r\n");
-                out.write("Content-Type: text/html\r\n");
-                out.write("Content-Length: 59\r\n");
-                out.write("Expires: Sat, 01 Jan 2000 00:59:59 GMT\r\n");
-                out.write("Last-modified: Fri, 09 Aug 1996 14:21:40 GMT\r\n");
+                out.write(contentType);
+                out.write(contentLength);
+                out.write("Expires:None\r\n");
+                out.write(lastModified);
                 out.write("\r\n");
                 out.write(line);
                 out.flush();

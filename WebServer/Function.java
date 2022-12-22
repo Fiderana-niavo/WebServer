@@ -4,28 +4,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Function {
-    public String getUrl(String s) {
-        if (s.contains("GET") && s.contains("HTTP") && s.contains("favicon.ico") == false) {
-            System.out.println(s + "loplkp");
-            String valiny[] = s.split("/");
-            if (s.split("/")[1].strip().split(" ").length == 2) {
-                // System.out.println(s.split("/")[1].strip().split(" ").length + "neineuin");
-                return s.split("/")[1].strip().split(" ")[0];
-            }
-            return "";
-
-        }
-        return null;
-    }
+   
 
     public boolean verifyFichier(File f, String fichier) {
         String[] files = new String[f.list().length];
         for (int i = 0; i < f.list().length; i++) {
-            String file = "/" + f.list()[i];
+            String file = f.list()[i];
             if (file.equalsIgnoreCase(fichier) == true) {
                 return true;
             }
@@ -37,13 +26,11 @@ public class Function {
         String url = "";
         for (int i = 0; i < lists.size(); i++) {
             String valuable = (String) lists.get(i);
-            if (valuable.contains("favicon.ico") == false) {
-                if (valuable.contains("GET") || valuable.contains("POST"))
-                    url = valuable;
-                return url;
-            }
+            if (valuable.contains("GET") || valuable.contains("POST"))
+                url = valuable;
+            return url;
         }
-        return null;
+        return "";
     }
 
     public String getvaleurPost(BufferedReader in) throws Exception {
@@ -78,17 +65,16 @@ public class Function {
                 return urlClient;
             }
         } else {
-            return null;
+            return "";
         }
     }
 
     public String getVariable(String url, BufferedReader in) throws Exception {
-        System.out.println(url + "ito koa eh ");
         String answer = "";
         if (url.equals("") == false) {
-            String urlClient = "www" + url.split(" ")[1];
-            if (urlClient.contains("?")) {
-                answer = urlClient.split("\\?")[1];
+            // String urlClient = "www" + url.split(" ")[1];
+            if (url.contains("?")) {
+                answer = url.split("\\?")[1];
             }
         }
         return answer;
@@ -103,10 +89,21 @@ public class Function {
         return line;
     }
 
+    public String getPort() throws Exception {
+        File file = new File("Config.ini");
+        Scanner scan = new Scanner(file);
+        String line = new String();
+        while (scan.hasNextLine()) {
+            line = line + scan.nextLine();
+        }
+        String port = line.split(",")[0];
+        return port.split(":")[1];
+    }
+
     public String getAllFile(File file) {
         String valiny = "<table><tr><td>Voici Tous les fichiers/Dossiers</td><tr> \n";
         for (int i = 0; i < file.list().length; i++) {
-            valiny = valiny + "<tr><td><a href=www" + file.list()[i] + ">" + file.list()[i] + "</a></td><tr> \n";
+            valiny = valiny + "<tr><td><a href=" + file.list()[i] + ">" + file.list()[i] + "</a></td><tr> \n";
         }
         valiny = valiny + "</table>";
         return valiny;
@@ -128,31 +125,58 @@ public class Function {
         return false;
     }
 
-    public String getHtmlTOPhp(String path, String variable) throws Exception {
-        System.out.println(variable + "variabvlr");
-        Runtime run = Runtime.getRuntime();
-        // run.exec("cd php-5.3.25");
-        Process process = run.exec("php-cgi " + path + " " + variable);
+    public void write(File file1, File file2, File file3) throws Exception { // file1 vers file2
+        String myString = getHtmlText(file1);
+        myString = myString + getHtmlText(file2);
+        PrintWriter print = new PrintWriter(file3);
+        print.write(myString);
+        print.close();
+    }
 
+    public String getScriptAndFile(String f) throws Exception {
+        File variable = new File("Variable.php");
+        File myFile = new File(f);
+        File temp = new File("FileTemp.php");
+        write(variable, myFile, temp);
+        return temp.getPath();
+    }
+
+    public String getHtmlTOPhp(String path, String variable) throws Exception {
+        // System.out.println(variable + "variable");
+        Runtime run = Runtime.getRuntime();
+        String pathIlaina = getScriptAndFile(path);
+        // run.exec("cd php-5.3.25");
+        System.out.println("php-cgi " + path + " " + variable + "variable ok");
+        Process process;
+        if (variable != null) {
+            process = run.exec("php-cgi " + pathIlaina + " " + variable);
+        } else {
+            process = run.exec("php-cgi " + path);
+        }
         InputStream stream = process.getInputStream();
         InputStreamReader in = new InputStreamReader(stream);
         BufferedReader buffered = new BufferedReader(in);
         String answer = "";
         String myread = "";
         while ((myread = buffered.readLine()) != null) {
-            answer = answer + myread + "\n";
+            if (myread.equals("")) {
+                while ((myread = buffered.readLine()) != null) {
+                    answer = answer + myread + "\n";
+                }
+            }
         }
+        File file = new File(pathIlaina);
+        file.delete();
         stream.close();
         in.close();
         buffered.close();
         return answer;
     }
 
-    public boolean getExtension(String url) {
+    public boolean getExtensionPhp(String url) {
         if (url.contains("php")) {
             return true;
         }
         return false;
     }
-
 }

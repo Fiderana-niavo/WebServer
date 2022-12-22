@@ -8,7 +8,7 @@
 </head>
 <body>
     <form method="post" action="MyTest.php">
-        <input type="text" name="anarana" value="okok">
+        <input type="text" name="anarana">
         <input type ="submit">
     </form>
 </body>
